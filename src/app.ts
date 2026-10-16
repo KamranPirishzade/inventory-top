@@ -2,6 +2,7 @@ import express from "express";
 import path from "node:path";
 import itemsRouter from "./routers/itemsRouter.ts";
 import categoriesRouter from "./routers/categoriesRouter.ts";
+import type { Request, Response, NextFunction } from "express";
 
 const rootDir = path.join(import.meta.dirname, "..");
 
@@ -21,6 +22,11 @@ app.use("/categories", categoriesRouter);
 
 app.use((req, res) => {
   res.status(404).send("Page not found");
+});
+
+app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+  console.error(err);
+  res.status(500).send("Internal Server Error");
 });
 
 const PORT = process.env.PORT || 3000;

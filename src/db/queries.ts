@@ -13,6 +13,7 @@ interface Figure {
 
 interface FigureWithBrand extends Figure {
   brand_name: string;
+  category_name: string;
 }
 
 interface Category {
@@ -38,7 +39,7 @@ async function getItemsByCategory(
   categoryId: number,
 ): Promise<FigureWithBrand[]> {
   const { rows } = await pool.query<FigureWithBrand>(
-    "SELECT f.*, b.name AS brand_name FROM figures f JOIN brands b on f.brand_id=b.id WHERE category_id = $1 ORDER BY f.name;",
+    "SELECT f.*, b.name AS brand_name, c.name AS category_name FROM figures f JOIN brands b on f.brand_id=b.id JOIN categories c on f.category_id=c.id WHERE category_id = $1 ORDER BY f.name;",
     [categoryId],
   );
   return rows;
@@ -48,7 +49,7 @@ async function getItemById(
   itemId: number,
 ): Promise<FigureWithBrand | undefined> {
   const { rows } = await pool.query<FigureWithBrand>(
-    "SELECT f.*, b.name AS brand_name FROM figures f JOIN brands b on f.brand_id=b.id WHERE f.id = $1;",
+    "SELECT f.*, b.name AS brand_name, c.name AS category_name FROM figures f JOIN brands b on f.brand_id=b.id JOIN categories c on f.category_id=c.id WHERE f.id = $1;",
     [itemId],
   );
   return rows[0];

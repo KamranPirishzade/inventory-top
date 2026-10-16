@@ -7,26 +7,28 @@
     <link rel="stylesheet" href="/output.css">
 </head>
 <body class="p-4">
-    <h1>Items</h1>
-    <p>Welcome to the Items page!</p>
-    <categories>
-        <h2>Categories</h2>
-        <ul class="flex gap-3">
-            <% categories.forEach(category => { %>
-                <a href="/items/?category_id=<%= category.id %>"><li class="px-3 py-2 border rounded-xl border-gray-300 hover:bg-gray-100 hover:transition-colors hover:duration-150 <%= Number(selectedCategory) === Number(category.id) ? 'bg-gray-200' : '' %>"><%= category.name %></li></a>
-            <% }); %>
-        </ul>
-    </categories>
-    <items>
-        <h2>Items</h2>
-        <ul class="grid grid-cols-4 gap-4">
-            <% items.forEach(item => { %>
-            <li class="p-2 border rounded-xl border-gray-300">
-                    <img src="<% if (item.img_url) { %><%= item.img_url %><% } else { %>/images/default.png<% } %>" alt="<%= item.name %>" width="100" height="100">
-                    <a href="/items/<%= item.id %>"><%= item.name %></a>
-                    <p><%= item.description %></p></li>
-            <% }); %>
-        </ul>
-    </items>
+    <h1 class="text-2xl font-bold">Welcome to the Items page!</h1>
+        <h2 class="text-xl font-semibold">Categories</h2>
+        <nav>
+            <ul class="flex gap-3">
+                <li><a href="/items" class="block px-3 py-2 border rounded-xl border-gray-300 hover:bg-gray-100 hover:transition-colors hover:duration-150 <%= selectedCategory === null ? 'bg-gray-200' : '' %>">All</a></li>
+                <% categories.forEach(category => { %>
+                    <li><a class="block px-3 py-2 border rounded-xl border-gray-300 hover:bg-gray-100 hover:transition-colors hover:duration-150 <%= Number(selectedCategory) === Number(category.id) ? 'bg-gray-200' : '' %>" href="/items/?category_id=<%= category.id %>"><%= category.name %></a></li>
+                <% }); %>
+            </ul>
+        </nav>
+        <main>
+            <h2 class="text-xl font-semibold">Items</h2>
+            <ul class="grid grid-cols-4 gap-4">
+                <% items.forEach(item => { %>
+                <li class="p-2 border min-h-60 rounded-xl border-gray-300">
+                        <img src="<% if (item.img_url) { %><%= item.img_url %><% } else { %>/images/default.png<% } %>" alt="<%= item.name %>" width="100" height="100" onerror="this.src='/images/default.png'">
+                        <a href="/items/<%= item.id %>"><%= item.name %></a>
+                        <p><%= item.description %></p>
+                        <p><strong>Price:</strong> $<%= item.price %></p>
+                        <p><strong>Availability:</strong> <%= item.stock > 0 ? 'In Stock(' + item.stock + ')' : 'Out of Stock' %></p>
+                <% }); %>
+            </ul>
+        </main>
 </body>
 </html>
