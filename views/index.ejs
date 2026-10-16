@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Items</title>
+    <link rel="stylesheet" href="/output.css">
+</head>
+<body class="p-4">
+    <h1>Items</h1>
+    <p>Welcome to the Items page!</p>
+    <categories>
+        <h2>Categories</h2>
+        <ul class="flex gap-3">
+            <% categories.forEach(category => { %>
+                <a href="/items/?category_id=<%= category.id %>"><li class="px-3 py-2 border rounded-xl border-gray-300 hover:bg-gray-100 hover:transition-colors hover:duration-150 <%= Number(selectedCategory) === Number(category.id) ? 'bg-gray-200' : '' %>"><%= category.name %></li></a>
+            <% }); %>
+        </ul>
+    </categories>
+    <items>
+        <h2>Items</h2>
+        <ul class="grid grid-cols-4 gap-4">
+            <% items.forEach(item => { %>
+            <li class="p-2 border rounded-xl border-gray-300">
+                    <img src="<% if (item.img_url) { %><%= item.img_url %><% } else { %>/images/default.png<% } %>" alt="<%= item.name %>" width="100" height="100">
+                    <a href="/items/<%= item.id %>"><%= item.name %></a>
+                    <p><%= item.description %></p></li>
+            <% }); %>
+        </ul>
+    </items>
+</body>
+</html>
