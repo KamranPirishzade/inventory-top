@@ -16,3 +16,25 @@ async function getItems(req: Request, res: Response) {
     selectedCategory: hasFilter ? categoryId : null,
   });
 }
+
+async function getItemById(req: Request, res: Response) {
+  const { id } = req.params;
+  const itemIdPolished = typeof id === "string" ? Number(id) : NaN;
+  if (!Number.isInteger(itemIdPolished) || itemIdPolished <= 0) {
+    res.status(400).send("Invalid item ID");
+    return;
+  }
+
+  const item = await db.getItemById(itemIdPolished);
+  if (!item) {
+    res.status(404).send("Item not found");
+    return;
+  }
+
+  res.render("itemDetail", { item });
+}
+
+export default {
+  getItems,
+  getItemById,
+};
