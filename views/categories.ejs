@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Categories</title>
+    <link rel="stylesheet" href="/output.css" />
+  </head>
+  <body class="p-4">
+    <%- include('partials/header') %>
+    <h1 class="text-2xl font-bold">Categories</h1>
+    <section class="flex gap-4 mt-5">
+    <% categories.forEach((category) => { %>
+        <div class="p-4 border rounded-xl border-gray-300 mb-4 text-center">
+            <h2><%= category.name %></h2>
+            <p><%= category.description %></p>
+            <a href="/items?category_id=<%= category.id %>" class="text-blue-500 hover:underline">View items</a>
+        </div>
+     <% }) %>
+    </section>
+    <a href="/categories/add" class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Category</a>
+  </body>
+</html>
