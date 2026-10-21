@@ -3,6 +3,7 @@ import db from "../db/queries.ts";
 import {
   isCategoryHasItemsError,
   isUniqueViolationError,
+  isValidAdminPassword,
   parseId,
 } from "../utils.ts";
 import { body, validationResult, matchedData } from "express-validator";
@@ -23,6 +24,12 @@ const validateCategory = [
     .isLength({ max: 500 })
     .withMessage("Category description must be at most 500 characters long"),
 ];
+
+const adminPasswordRule = body("adminPassword")
+  .custom((value) => isValidAdminPassword(value))
+  .withMessage("Invalid admin password");
+
+const validateCategoryForUpdate = [...validateCategory, adminPasswordRule];
 
 const errorMessages: Record<string, string> = {
   "has-items":
@@ -144,6 +151,22 @@ async function updateCategoryPost(req: Request, res: Response) {
   res.redirect("/categories");
 }
 
+async function deleteCategoryGet(req: Request, res: Response) {
+  const { id } = req.params;
+  const categoryId = parseId(id);
+  if (categoryId === undefined) {
+    res.status(404).send("Invalid category ID");
+    return;
+  }
+  const category = await db.getCategoryById(categoryId);
+  if (!category) {
+    res.status(404).send("Category not found");
+    return;
+  }
+
+  res.render("deleteCategory", { categoryName: category.name, categoryId });
+}
+
 async function deleteCategoryPost(req: Request, res: Response) {
   const { id } = req.params;
   const categoryId = parseId(id);
@@ -151,6 +174,15 @@ async function deleteCategoryPost(req: Request, res: Response) {
     res.status(404).send("Invalid category ID");
     return;
   }
+  if (!isValidAdminPassword(req.body?.adminPassword)) {
+    res.status(403).render("deleteCategory", {
+      categoryName: (await db.getCategoryById(categoryId))?.name,
+      categoryId,
+      errorMessage: "Invalid admin password",
+    });
+    return;
+  }
+
   try {
     const deleted = await db.deleteCategory(categoryId);
     if (!deleted) {
@@ -159,7 +191,12 @@ async function deleteCategoryPost(req: Request, res: Response) {
     }
   } catch (err) {
     if (isCategoryHasItemsError(err)) {
-      res.redirect("/categories?error=has-items&categoryId=" + categoryId);
+      res.status(409).render("deleteCategory", {
+        categoryName: (await db.getCategoryById(categoryId))?.name,
+        categoryId,
+        errorMessage:
+          "This category has items associated with it and cannot be deleted.",
+      });
       return;
     }
     throw err;
@@ -173,7 +210,9 @@ export default {
   addCategory,
   addCategoryGet,
   validateCategory,
+  validateCategoryForUpdate,
   updateCategoryGet,
   updateCategoryPost,
+  deleteCategoryGet,
   deleteCategoryPost,
 };

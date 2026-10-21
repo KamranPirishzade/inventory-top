@@ -10,11 +10,12 @@ itemRouter.post(
   itemsController.itemValidationRules,
   itemsController.addItemPost,
 );
+itemRouter.get("/:id/delete", itemsController.deleteItemGet);
 itemRouter.post("/:id/delete", itemsController.deleteItemPost);
 itemRouter.get("/:id/update", itemsController.updateItemGet);
 itemRouter.post(
   "/:id/update",
-  itemsController.itemValidationRules,
+  itemsController.itemValidationRulesForUpdate,
   itemsController.updateItemPost,
 );
 itemRouter.get("/:id", itemsController.getItemById);

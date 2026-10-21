@@ -20,3 +20,9 @@ export function isCategoryHasItemsError(
 ): error is DatabaseError {
   return error instanceof DatabaseError && error.code === "23001";
 }
+
+export function isValidAdminPassword(value: unknown): boolean {
+  const expected = process.env.ADMIN_PASSWORD;
+  if (!expected) return false;
+  return typeof value === "string" && value === expected;
+}

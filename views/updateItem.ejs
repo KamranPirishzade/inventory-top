@@ -104,6 +104,18 @@
           />
         </div>
 
+        <div class="field">
+          <label for="adminPassword" class="field-label">Admin password</label>
+          <input
+            type="password"
+            name="adminPassword"
+            id="adminPassword"
+            required
+            maxlength="100"
+            class="field-input"
+          />
+        </div>
+
         <div class="flex justify-end gap-3 pt-2">
           <a href="/items/<%= itemId %>" class="btn btn-secondary">Cancel</a>
           <button type="submit" class="btn btn-primary">Save changes</button>

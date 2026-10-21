@@ -1,7 +1,21 @@
 import type { Request, Response } from "express";
 import db from "../db/queries.ts";
-import { isUniqueViolationError, parseId } from "../utils.ts";
+import {
+  isUniqueViolationError,
+  isValidAdminPassword,
+  parseId,
+} from "../utils.ts";
 import { body, validationResult, matchedData } from "express-validator";
+
+const adminPasswordRule = body("adminPassword")
+  .trim()
+  .notEmpty()
+  .withMessage("Admin password is required")
+  .bail()
+  .isLength({ max: 100 })
+  .withMessage("Admin password must be at most 100 characters long")
+  .custom((value) => value === process.env.ADMIN_PASSWORD)
+  .withMessage("Invalid admin password");
 
 const itemValidationRules = [
   body("name")
@@ -58,6 +72,11 @@ const itemValidationRules = [
     .optional({ values: "falsy" })
     .isURL()
     .withMessage("Please provide a valid image URL"),
+];
+
+const itemValidationRulesForUpdate = [
+  ...itemValidationRules,
+  adminPasswordRule,
 ];
 
 async function getItems(req: Request, res: Response) {
@@ -254,7 +273,7 @@ async function updateItemPost(req: Request, res: Response) {
   res.redirect("/items");
 }
 
-async function deleteItemPost(req: Request, res: Response) {
+async function deleteItemGet(req: Request, res: Response) {
   const { id } = req.params;
   const itemId = parseId(id);
   if (itemId === undefined) {
@@ -262,6 +281,40 @@ async function deleteItemPost(req: Request, res: Response) {
     return;
   }
 
+  const item = await db.getItemById(itemId);
+  if (!item) {
+    res.status(404).send("Item not found");
+    return;
+  }
+
+  res.render("deleteItem", {
+    itemName: item.name,
+    itemId,
+    itemBrand: item.brand_name,
+  });
+}
+
+async function deleteItemPost(req: Request, res: Response) {
+  const { id } = req.params;
+  const itemId = parseId(id);
+  if (itemId === undefined) {
+    res.status(404).send("Invalid item ID");
+    return;
+  }
+  if (!isValidAdminPassword(req.body?.adminPassword)) {
+    const item = await db.getItemById(itemId);
+    if (!item) {
+      res.status(404).send("Item not found");
+      return;
+    }
+    res.status(403).render("deleteItem", {
+      itemName: item.name,
+      itemId,
+      itemBrand: item.brand_name,
+      errorMessage: "Invalid admin password",
+    });
+    return;
+  }
   const isDeleted = await db.deleteItem(itemId);
   if (!isDeleted) {
     res.status(404).send("Item not found");
@@ -276,8 +329,10 @@ export default {
   getItemById,
   addItemsGet,
   itemValidationRules,
+  itemValidationRulesForUpdate,
   addItemPost,
   updateItemGet,
   updateItemPost,
+  deleteItemGet,
   deleteItemPost,
 };

@@ -10,10 +10,16 @@
     <%- include('partials/header') %>
 
     <main class="page">
-      <form action="/categories/<%= categoryId %>/update" method="POST" class="card form-card flex flex-col gap-5">
+      <form
+        action="/categories/<%= categoryId %>/update"
+        method="POST"
+        class="card form-card flex flex-col gap-5"
+      >
         <div>
           <h1 class="page-title">Edit category</h1>
-          <p class="page-subtitle">Changes apply to every item in this category.</p>
+          <p class="page-subtitle">
+            Changes apply to every item in this category.
+          </p>
         </div>
 
         <%- include('partials/formErrors') %>
@@ -40,7 +46,21 @@
             maxlength="500"
             rows="4"
             class="field-input"
-          ><%= locals.values?.description || '' %></textarea>
+          >
+<%= locals.values?.description || '' %></textarea
+          >
+        </div>
+
+        <div class="field">
+          <label for="name" class="field-label">Admin password</label>
+          <input
+            type="password"
+            name="adminPassword"
+            id="adminPassword"
+            required
+            maxlength="100"
+            class="field-input"
+          />
         </div>
 
         <div class="flex justify-end gap-3 pt-2">

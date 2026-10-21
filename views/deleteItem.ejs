@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delete item · FigureStore</title>
+    <link rel="stylesheet" href="/output.css" />
+  </head>
+  <body>
+    <%- include('partials/header') %>
+
+    <main class="page">
+      <form action="/items/<%= itemId %>/delete" method="POST" class="card form-card flex flex-col gap-5">
+        <div>
+          <h1 class="page-title">Delete item</h1>
+          <p class="mt-2 text-gray-600">
+            Are you sure you want to delete <strong>"<%= itemName %>"</strong> by <%= itemBrand %>?
+            This cannot be undone.
+          </p>
+        </div>
+
+        <% if (locals.errorMessage) { %>
+          <p class="error-box" role="alert"><%= errorMessage %></p>
+        <% } %>
+
+        <div class="field">
+          <label for="adminPassword" class="field-label">Admin password</label>
+          <input type="password" name="adminPassword" id="adminPassword" required class="field-input" />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <a href="/items/<%= itemId %>" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-danger">Delete item</button>
+        </div>
+      </form>
+    </main>
+  </body>
+</html>

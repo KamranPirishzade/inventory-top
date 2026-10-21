@@ -52,13 +52,7 @@
 
           <div class="mt-auto flex flex-wrap gap-3 pt-2">
             <a href="/items/<%= itemId %>/update" class="btn btn-primary">Edit item</a>
-            <form action="/items/<%= itemId %>/delete" method="POST">
-              <button
-                type="submit"
-                class="btn btn-danger"
-                onclick="return confirm('Are you sure you want to delete this item?')"
-              >Delete item</button>
-            </form>
+            <a href="/items/<%= itemId %>/delete" class="btn btn-danger">Delete item</a>
           </div>
         </div>
       </article>
