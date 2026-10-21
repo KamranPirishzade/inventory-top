@@ -78,6 +78,29 @@ async function getBrands(): Promise<Brand[]> {
   return rows;
 }
 
+async function getBrandById(brandId: number): Promise<Brand | undefined> {
+  const { rows } = await pool.query<Brand>(
+    "SELECT * FROM brands WHERE id=$1;",
+    [brandId],
+  );
+  return rows[0];
+}
+
+async function addItem(
+  name: string,
+  description: string | null,
+  price: string,
+  stock: number,
+  categoryId: number,
+  brandId: number,
+  img_url: string | null,
+): Promise<void> {
+  await pool.query(
+    "INSERT INTO figures (name, description, price, stock, category_id, brand_id, img_url) VALUES ($1, $2, $3, $4, $5, $6, $7);",
+    [name, description, price, stock, categoryId, brandId, img_url],
+  );
+}
+
 async function addCategory(name: string, description: string): Promise<void> {
   await pool.query(
     "INSERT INTO categories (name, description) VALUES ($1, $2);",
@@ -92,5 +115,7 @@ export default {
   getCategories,
   getCategoryById,
   getBrands,
+  getBrandById,
+  addItem,
   addCategory,
 };

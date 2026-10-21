@@ -19,13 +19,13 @@ const SQL = `
         stock INTEGER DEFAULT 0 NOT NULL CHECK(stock>=0),
         category_id INTEGER NOT NULL REFERENCES categories (id) ON DELETE RESTRICT,
         brand_id INTEGER NOT NULL REFERENCES brands (id) ON DELETE RESTRICT,
-        img_url TEXT,
-        UNIQUE (name, brand_id)
+        img_url TEXT
     );
 
     CREATE INDEX IF NOT EXISTS figures_category_id_idx ON figures (category_id);
     CREATE INDEX IF NOT EXISTS figures_brand_id_idx ON figures (brand_id);
     CREATE UNIQUE INDEX IF NOT EXISTS categories_name_lower_idx ON categories (LOWER(name));
+    CREATE UNIQUE INDEX IF NOT EXISTS figures_name_lower_brand_id_idx ON figures (LOWER(name), brand_id);
 
     INSERT INTO categories(name, description)
     VALUES 

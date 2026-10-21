@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add item form</title>
+    <link rel="stylesheet" href="/output.css" />
+  </head>
+  <body class="p-4">
+    <%- include('partials/header') %>
+    <h3 class="text-2xl font-bold">Add a new item</h3>
+    <form
+      action="/items/add"
+      method="POST"
+      class="flex flex-col max-w-md gap-4 mt-4"
+    >
+      <label for="name">Item Name:</label>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        required
+        class="border rounded p-2"
+        value="<%= locals.values?.name || '' %>"
+      />
+
+      <label for="description">Description:</label>
+      <textarea
+        name="description"
+        id="description"
+        class="border rounded p-2"
+    
+      ><%= locals.values?.description || '' %></textarea>
+      
+      <label for="category_id">Category:</label>
+      <select name="category_id" id="category_id" required>
+        <option value="">Choose a category</option>
+        <% categories.forEach((c) => { %>
+            <option value="<%= c.id %>" <%= String(c.id) === String(values?.category_id) ? "selected" : "" %>>
+            <%= c.name %>
+            </option>
+        <% }) %>
+        </select>
+
+        <label for="brand_id">Brand:</label>
+        <select name="brand_id" id="brand_id" required>
+        <option value="">Choose a brand</option>
+        <% brands?.forEach((b) => { %>
+            <option value="<%= b.id %>" <%= String(b.id) === String(values?.brand_id) ? "selected" : "" %>>
+            <%= b.name %>
+            </option>
+        <% }) %>
+        </select>
+        <label for="price">Price:</label>
+        <input
+          type="number"
+          name="price"
+          id="price"
+          required
+          class="border rounded p-2"
+          value="<%= values?.price || '' %>"
+          min="0"
+          step="0.01"
+        />
+        <label for="stock">Stock:</label>
+        <input
+          type="number"
+          name="stock"
+          id="stock"
+          required
+          class="border rounded p-2"
+          value="<%= values?.stock || '' %>"
+          min="0"
+          step="1"
+        />
+        <label for="img_url">Image URL:</label>
+        <input
+          type="text"
+          name="img_url"
+          id="img_url"
+          class="border rounded p-2"
+          value="<%= values?.img_url || '' %>"
+        />
+      
+      <% if (errors !==null && errors.length > 0) { %>
+        <div class="text-red-500">
+          <ul>
+            <% errors.forEach(error => { %>
+              <li><%= error.msg %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+
+      <button
+        type="submit"
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      >
+        Add item
+      </button>
+    </form>
+  </body>
+</html>

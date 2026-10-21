@@ -4,8 +4,12 @@ import itemsController from "../controllers/itemsController.ts";
 const itemRouter = Router();
 
 itemRouter.get("/", itemsController.getItems);
-// itemRouter.get("/add");
-// itemRouter.post("/add");
+itemRouter.get("/add", itemsController.addItemsGet);
+itemRouter.post(
+  "/add",
+  itemsController.itemValidationRules,
+  itemsController.addItemPost,
+);
 // itemRouter.post("/:id/delete");
 // itemRouter.get("/:id/update");
 // itemRouter.post("/:id/update");
