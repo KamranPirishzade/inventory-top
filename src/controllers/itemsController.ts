@@ -90,7 +90,7 @@ async function getItemById(req: Request, res: Response) {
     return;
   }
 
-  res.render("itemDetail", { item });
+  res.render("itemDetail", { item, itemId });
 }
 
 async function addItemsGet(req: Request, res: Response) {
@@ -254,6 +254,23 @@ async function updateItemPost(req: Request, res: Response) {
   res.redirect("/items");
 }
 
+async function deleteItemPost(req: Request, res: Response) {
+  const { id } = req.params;
+  const itemId = parseId(id);
+  if (itemId === undefined) {
+    res.status(404).send("Invalid item ID");
+    return;
+  }
+
+  const isDeleted = await db.deleteItem(itemId);
+  if (!isDeleted) {
+    res.status(404).send("Item not found");
+    return;
+  }
+
+  res.redirect(`/items`);
+}
+
 export default {
   getItems,
   getItemById,
@@ -262,4 +279,5 @@ export default {
   addItemPost,
   updateItemGet,
   updateItemPost,
+  deleteItemPost,
 };

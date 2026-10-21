@@ -154,6 +154,13 @@ async function updateItem(
   return rowCount === 1;
 }
 
+async function deleteItem(itemId: number): Promise<boolean> {
+  const { rowCount } = await pool.query("DELETE FROM figures WHERE id=$1;", [
+    itemId,
+  ]);
+  return rowCount === 1;
+}
+
 export default {
   getItems,
   getItemsByCategory,
@@ -168,4 +175,5 @@ export default {
   updateCategory,
   deleteCategory,
   updateItem,
+  deleteItem,
 };
