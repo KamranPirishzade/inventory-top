@@ -28,6 +28,7 @@
                         <p><%= item.description %></p>
                         <p><strong>Price:</strong> $<%= item.price %></p>
                         <p><strong>Availability:</strong> <%= item.stock > 0 ? 'In Stock(' + item.stock + ')' : 'Out of Stock' %></p>
+                        <a href="/items/<%= item.id %>/update" class="text-blue-500 hover:underline">Edit</a>
                 <% }); %>
             </ul>
             <a href="/items/add" class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Item</a>

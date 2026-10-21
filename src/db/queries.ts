@@ -136,6 +136,24 @@ async function deleteCategory(categoryId: number): Promise<boolean> {
   return rowCount === 1;
 }
 
+async function updateItem(
+  itemId: number,
+  name: string,
+  description: string | null,
+  price: string,
+  stock: number,
+  categoryId: number,
+  brandId: number,
+  img_url: string | null,
+): Promise<boolean> {
+  const { rowCount } = await pool.query(
+    "UPDATE figures SET name=$1, description=$2, price=$3, stock=$4, category_id=$5, brand_id=$6, img_url=$7 WHERE id=$8;",
+    [name, description, price, stock, categoryId, brandId, img_url, itemId],
+  );
+
+  return rowCount === 1;
+}
+
 export default {
   getItems,
   getItemsByCategory,
@@ -149,4 +167,5 @@ export default {
   addCategory,
   updateCategory,
   deleteCategory,
+  updateItem,
 };

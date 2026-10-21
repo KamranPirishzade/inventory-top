@@ -156,10 +156,110 @@ async function addItemPost(req: Request, res: Response) {
   res.redirect("/items");
 }
 
+async function updateItemGet(req: Request, res: Response) {
+  const { id } = req.params;
+
+  const itemId = parseId(id);
+  if (itemId === undefined) {
+    res.status(404).send("Invalid item ID");
+    return;
+  }
+
+  const item = await db.getItemById(itemId);
+  if (!item) {
+    res.status(404).send("Item not found");
+    return;
+  }
+
+  const [categories, brands] = await Promise.all([
+    db.getCategories(),
+    db.getBrands(),
+  ]);
+
+  res.render("updateItem", {
+    errors: null,
+    values: item,
+    categories,
+    brands,
+    itemId,
+  });
+  return;
+}
+
+async function updateItemPost(req: Request, res: Response) {
+  const { id } = req.params;
+  const itemId = parseId(id);
+  if (itemId === undefined) {
+    res.status(404).send("Invalid item ID");
+    return;
+  }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const [categories, brands] = await Promise.all([
+      db.getCategories(),
+      db.getBrands(),
+    ]);
+    res.status(400).render("updateItem", {
+      errors: errors.array(),
+      itemId,
+      values: req.body,
+      categories,
+      brands,
+    });
+    return;
+  }
+
+  const { name, description, price, stock, category_id, brand_id, img_url } =
+    matchedData(req);
+
+  try {
+    const isUpdated = await db.updateItem(
+      itemId,
+      name,
+      description,
+      price,
+      stock,
+      category_id,
+      brand_id,
+      img_url || null,
+    );
+    if (!isUpdated) {
+      res.status(404).send("Item not found");
+      return;
+    }
+  } catch (err) {
+    if (
+      isUniqueViolationError(err) &&
+      err.constraint === "figures_name_lower_brand_id_idx"
+    ) {
+      const [categories, brands] = await Promise.all([
+        db.getCategories(),
+        db.getBrands(),
+      ]);
+      res.status(409).render("updateItem", {
+        errors: [
+          {
+            msg: `"${name} by ${brands.find((b) => b.id === brand_id)?.name}" already exists`,
+          },
+        ],
+        itemId,
+        values: req.body,
+        categories,
+        brands,
+      });
+      return;
+    }
+    throw err;
+  }
+  res.redirect("/items");
+}
+
 export default {
   getItems,
   getItemById,
   addItemsGet,
   itemValidationRules,
   addItemPost,
+  updateItemGet,
+  updateItemPost,
 };
