@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update category form</title>
+    <link rel="stylesheet" href="/output.css" />
+  </head>
+  <body class="p-4">
+    <%- include('partials/header') %>
+    <h3 class="text-2xl font-bold">Update category</h3>
+    <form
+      action="/categories/<%= categoryId %>/update"
+      method="POST"
+      class="flex flex-col max-w-md gap-4 mt-4"
+    >
+      <label for="name">Category Name:</label>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        required
+        class="border rounded p-2"
+        value="<%= locals.values?.name || '' %>"
+      />
+
+      <label for="description">Description:</label>
+      <textarea
+        name="description"
+        id="description"
+        required
+        class="border rounded p-2"
+    
+      ><%= locals.values?.description || '' %></textarea>
+      
+
+      <% if (errors !==null && errors.length > 0) { %>
+        <div class="text-red-500">
+          <ul>
+            <% errors.forEach(error => { %>
+              <li><%= error.msg %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+
+      <button
+        type="submit"
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      >
+        Update Category
+      </button>
+    </form>
+  </body>
+</html>

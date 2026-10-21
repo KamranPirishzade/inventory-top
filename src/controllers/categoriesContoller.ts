@@ -71,10 +71,64 @@ async function addCategory(req: Request, res: Response) {
   res.redirect("/categories");
 }
 
+async function updateCategoryGet(req: Request, res: Response) {
+  const { id } = req.params;
+  const categoryId = parseId(id);
+  if (categoryId === undefined) {
+    res.status(404).send("Invalid category ID");
+    return;
+  }
+  const category = await db.getCategoryById(categoryId);
+  if (!category) {
+    res.status(404).send("Category not found");
+    return;
+  }
+
+  res.render("updateCategory", { values: category, errors: null, categoryId });
+}
+
+async function updateCategoryPost(req: Request, res: Response) {
+  const { id } = req.params;
+  const categoryId = parseId(id);
+  if (categoryId === undefined) {
+    res.status(404).send("Invalid category ID");
+    return;
+  }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(400).render("updateCategory", {
+      errors: errors.array(),
+      values: req.body,
+      categoryId,
+    });
+    return;
+  }
+  const { name, description } = matchedData(req);
+  try {
+    const updated = await db.updateCategory(categoryId, name, description);
+    if (!updated) {
+      res.status(404).send("Category not found");
+      return;
+    }
+  } catch (err) {
+    if (isUniqueViolationError(err)) {
+      res.status(409).render("updateCategory", {
+        errors: [{ msg: `A category named "${name}" already exists` }],
+        values: req.body,
+        categoryId,
+      });
+      return;
+    }
+    throw err;
+  }
+  res.redirect("/categories");
+}
 export default {
   getCategories,
   getCategoryById,
   addCategory,
   addCategoryGet,
   validateCategory,
+  updateCategoryGet,
+  updateCategoryPost,
 };

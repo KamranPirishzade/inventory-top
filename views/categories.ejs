@@ -15,6 +15,7 @@
             <h2><%= category.name %></h2>
             <p><%= category.description %></p>
             <a href="/items?category_id=<%= category.id %>" class="text-blue-500 hover:underline">View items</a>
+            <a href="/categories/<%= category.id %>/update" class="text-blue-500 hover:underline ml-2">Edit</a>
         </div>
      <% }) %>
     </section>

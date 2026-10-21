@@ -11,8 +11,12 @@ categoriesRouter.post(
   categoriesController.addCategory,
 );
 // categoriesRouter.get("/:id", categoriesController.getCategoryById);
-// categoriesRouter.get("/:id/update");
-// categoriesRouter.post("/:id/update");
+categoriesRouter.get("/:id/update", categoriesController.updateCategoryGet);
+categoriesRouter.post(
+  "/:id/update",
+  categoriesController.validateCategory,
+  categoriesController.updateCategoryPost,
+);
 // categoriesRouter.post("/:id/delete");
 
 export default categoriesRouter;

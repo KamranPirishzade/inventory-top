@@ -108,6 +108,19 @@ async function addCategory(name: string, description: string): Promise<void> {
   );
 }
 
+async function updateCategory(
+  categoryId: number,
+  name: string,
+  description: string,
+): Promise<boolean> {
+  const { rowCount } = await pool.query(
+    "UPDATE categories SET name=$1, description=$2 WHERE id=$3;",
+    [name, description, categoryId],
+  );
+
+  return rowCount === 1;
+}
+
 export default {
   getItems,
   getItemsByCategory,
@@ -118,4 +131,5 @@ export default {
   getBrandById,
   addItem,
   addCategory,
+  updateCategory,
 };
