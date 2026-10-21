@@ -2,7 +2,7 @@
 
 An inventory management app for an imaginary collectible figure store, built for [The Odin Project](https://www.theodinproject.com/lessons/node-path-nodejs-inventory-application).
 
-**Live demo:** _add your Render link here_
+**Live demo:** https://inventory-top.onrender.com/items
 
 ## Features
 
