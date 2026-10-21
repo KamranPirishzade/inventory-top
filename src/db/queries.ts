@@ -71,6 +71,14 @@ async function getCategoryById(
   return rows[0];
 }
 
+async function getCategoryItemCount(categoryId: number): Promise<string> {
+  const { rows } = await pool.query<{ count: string }>(
+    "SELECT COUNT(*) AS count FROM figures WHERE category_id=$1;",
+    [categoryId],
+  );
+  return rows[0].count;
+}
+
 async function getBrands(): Promise<Brand[]> {
   const { rows } = await pool.query<Brand>(
     "SELECT * FROM brands ORDER BY name;",
@@ -121,15 +129,24 @@ async function updateCategory(
   return rowCount === 1;
 }
 
+async function deleteCategory(categoryId: number): Promise<boolean> {
+  const { rowCount } = await pool.query("DELETE FROM categories WHERE id=$1;", [
+    categoryId,
+  ]);
+  return rowCount === 1;
+}
+
 export default {
   getItems,
   getItemsByCategory,
   getItemById,
   getCategories,
   getCategoryById,
+  getCategoryItemCount,
   getBrands,
   getBrandById,
   addItem,
   addCategory,
   updateCategory,
+  deleteCategory,
 };

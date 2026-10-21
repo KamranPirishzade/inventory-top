@@ -14,3 +14,9 @@ export function parseId(value: unknown): number | undefined {
 export function isUniqueViolationError(error: unknown): error is DatabaseError {
   return error instanceof DatabaseError && error.code === "23505";
 }
+
+export function isCategoryHasItemsError(
+  error: unknown,
+): error is DatabaseError {
+  return error instanceof DatabaseError && error.code === "23001";
+}

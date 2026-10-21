@@ -1,6 +1,10 @@
 import type { Request, Response } from "express";
 import db from "../db/queries.ts";
-import { isUniqueViolationError, parseId } from "../utils.ts";
+import {
+  isCategoryHasItemsError,
+  isUniqueViolationError,
+  parseId,
+} from "../utils.ts";
 import { body, validationResult, matchedData } from "express-validator";
 
 const validateCategory = [
@@ -20,10 +24,29 @@ const validateCategory = [
     .withMessage("Category description must be at most 500 characters long"),
 ];
 
+const errorMessages: Record<string, string> = {
+  "has-items":
+    "Cannot delete this category because it still has items. Move or delete them first.",
+};
+
 async function getCategories(req: Request, res: Response) {
   const categories = await db.getCategories();
+  const errorCode =
+    typeof req.query.error === "string" ? req.query.error : undefined;
+  const errorCategoryId = parseId(req.query.categoryId);
+  const errorMessage =
+    errorCode && Object.hasOwn(errorMessages, errorCode)
+      ? errorMessages[errorCode]
+      : undefined;
+  const count = errorCategoryId
+    ? await db.getCategoryItemCount(errorCategoryId)
+    : undefined;
 
-  res.render("categories", { categories });
+  res.render("categories", {
+    categories,
+    errorMessage,
+    errorCategoryId,
+  });
 }
 
 async function getCategoryById(req: Request, res: Response) {
@@ -123,6 +146,30 @@ async function updateCategoryPost(req: Request, res: Response) {
   }
   res.redirect("/categories");
 }
+
+async function deleteCategoryPost(req: Request, res: Response) {
+  const { id } = req.params;
+  const categoryId = parseId(id);
+  if (categoryId === undefined) {
+    res.status(404).send("Invalid category ID");
+    return;
+  }
+  try {
+    const deleted = await db.deleteCategory(categoryId);
+    if (!deleted) {
+      res.status(404).send("Category not found");
+      return;
+    }
+  } catch (err) {
+    if (isCategoryHasItemsError(err)) {
+      res.redirect("/categories?error=has-items&categoryId=" + categoryId);
+      return;
+    }
+    throw err;
+  }
+  res.redirect("/categories");
+}
+
 export default {
   getCategories,
   getCategoryById,
@@ -131,4 +178,5 @@ export default {
   validateCategory,
   updateCategoryGet,
   updateCategoryPost,
+  deleteCategoryPost,
 };
