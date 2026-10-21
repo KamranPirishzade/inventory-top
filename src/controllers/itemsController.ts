@@ -1,10 +1,11 @@
 import type { Request, Response } from "express";
 import db from "../db/queries.ts";
+import { parseId } from "../utils.ts";
 
 async function getItems(req: Request, res: Response) {
   const raw = req.query.category_id;
-  const categoryId = typeof raw === "string" ? Number(raw) : NaN;
-  const hasFilter = Number.isInteger(categoryId) && categoryId > 0;
+  const categoryId = parseId(raw);
+  const hasFilter = categoryId !== undefined;
   const [items, categories] = await Promise.all([
     hasFilter ? db.getItemsByCategory(categoryId) : db.getItems(),
     db.getCategories(),
@@ -19,8 +20,8 @@ async function getItems(req: Request, res: Response) {
 
 async function getItemById(req: Request, res: Response) {
   const { id } = req.params;
-  const itemId = typeof id === "string" ? Number(id) : NaN;
-  if (!Number.isInteger(itemId) || itemId <= 0) {
+  const itemId = parseId(id);
+  if (itemId === undefined) {
     res.status(404).send("Invalid item ID");
     return;
   }
