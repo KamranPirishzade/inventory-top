@@ -1,1 +1,106 @@
 @import "tailwindcss";
+
+@layer base {
+  body {
+    @apply min-h-screen bg-gray-50 text-gray-800;
+  }
+}
+
+@layer components {
+  /* Layout */
+  .page {
+    @apply mx-auto w-full max-w-6xl px-4 py-8;
+  }
+
+  .page-header {
+    @apply mb-6 flex flex-wrap items-center justify-between gap-4;
+  }
+
+  .page-title {
+    @apply text-2xl font-bold text-gray-900;
+  }
+
+  .page-subtitle {
+    @apply mt-1 text-sm text-gray-500;
+  }
+
+  .card {
+    @apply rounded-lg border border-gray-200 bg-white;
+  }
+
+  .empty-state {
+    @apply rounded-lg border border-gray-200 bg-white px-6 py-12 text-center text-gray-500;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-block cursor-pointer rounded-md px-4 py-2 text-sm font-medium;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700;
+  }
+
+  .btn-secondary {
+    @apply border border-gray-300 bg-white text-gray-700 hover:bg-gray-100;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
+
+  .btn-link {
+    @apply cursor-pointer text-sm text-blue-600 hover:underline;
+  }
+
+  .btn-link-danger {
+    @apply cursor-pointer text-sm text-red-600 hover:underline;
+  }
+
+  /* Category filter */
+  .chip {
+    @apply inline-block rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100;
+  }
+
+  .chip-active {
+    @apply border-blue-600 bg-blue-600 text-white hover:bg-blue-700;
+  }
+
+  /* Forms */
+  .form-card {
+    @apply mx-auto max-w-xl p-6;
+  }
+
+  .field {
+    @apply flex flex-col gap-1;
+  }
+
+  .field-label {
+    @apply text-sm font-medium text-gray-700;
+  }
+
+  .field-hint {
+    @apply text-xs font-normal text-gray-400;
+  }
+
+  .field-input {
+    @apply w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-600 focus:outline-none;
+  }
+
+  .error-box {
+    @apply rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700;
+  }
+
+  /* Stock */
+  .badge {
+    @apply inline-block rounded px-2 py-0.5 text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-danger {
+    @apply bg-red-100 text-red-800;
+  }
+}

@@ -3,101 +3,112 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add item form</title>
+    <title>Add item · FigureStore</title>
     <link rel="stylesheet" href="/output.css" />
   </head>
-  <body class="p-4">
+  <body>
     <%- include('partials/header') %>
-    <h3 class="text-2xl font-bold">Add a new item</h3>
-    <form
-      action="/items/add"
-      method="POST"
-      class="flex flex-col max-w-md gap-4 mt-4"
-    >
-      <label for="name">Item Name:</label>
-      <input
-        type="text"
-        name="name"
-        id="name"
-        required
-        class="border rounded p-2"
-        value="<%= locals.values?.name || '' %>"
-      />
 
-      <label for="description">Description:</label>
-      <textarea
-        name="description"
-        id="description"
-        class="border rounded p-2"
-    
-      ><%= locals.values?.description || '' %></textarea>
-      
-      <label for="category_id">Category:</label>
-      <select name="category_id" id="category_id" required>
-        <option value="">Choose a category</option>
-        <% categories.forEach((c) => { %>
-            <option value="<%= c.id %>" <%= String(c.id) === String(values?.category_id) ? "selected" : "" %>>
-            <%= c.name %>
-            </option>
-        <% }) %>
-        </select>
-
-        <label for="brand_id">Brand:</label>
-        <select name="brand_id" id="brand_id" required>
-        <option value="">Choose a brand</option>
-        <% brands?.forEach((b) => { %>
-            <option value="<%= b.id %>" <%= String(b.id) === String(values?.brand_id) ? "selected" : "" %>>
-            <%= b.name %>
-            </option>
-        <% }) %>
-        </select>
-        <label for="price">Price:</label>
-        <input
-          type="number"
-          name="price"
-          id="price"
-          required
-          class="border rounded p-2"
-          value="<%= values?.price || '' %>"
-          min="0"
-          step="0.01"
-        />
-        <label for="stock">Stock:</label>
-        <input
-          type="number"
-          name="stock"
-          id="stock"
-          required
-          class="border rounded p-2"
-          value="<%= values?.stock || '' %>"
-          min="0"
-          step="1"
-        />
-        <label for="img_url">Image URL:</label>
-        <input
-          type="text"
-          name="img_url"
-          id="img_url"
-          class="border rounded p-2"
-          value="<%= values?.img_url || '' %>"
-        />
-      
-      <% if (errors !==null && errors.length > 0) { %>
-        <div class="text-red-500">
-          <ul>
-            <% errors.forEach(error => { %>
-              <li><%= error.msg %></li>
-            <% }); %>
-          </ul>
+    <main class="page">
+      <form action="/items/add" method="POST" class="card form-card flex flex-col gap-5">
+        <div>
+          <h1 class="page-title">Add a new item</h1>
+          <p class="page-subtitle">Fields without "optional" are required.</p>
         </div>
-      <% } %>
 
-      <button
-        type="submit"
-        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Add item
-      </button>
-    </form>
+        <%- include('partials/formErrors') %>
+
+        <div class="field">
+          <label for="name" class="field-label">Name</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            required
+            maxlength="100"
+            class="field-input"
+            value="<%= locals.values?.name || '' %>"
+          />
+        </div>
+
+        <div class="field">
+          <label for="description" class="field-label">Description <span class="field-hint">(optional)</span></label>
+          <textarea
+            name="description"
+            id="description"
+            maxlength="500"
+            rows="4"
+            class="field-input"
+          ><%= locals.values?.description || '' %></textarea>
+        </div>
+
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div class="field">
+            <label for="category_id" class="field-label">Category</label>
+            <select name="category_id" id="category_id" required class="field-input">
+              <option value="">Choose a category</option>
+              <% categories.forEach((c) => { %>
+                <option value="<%= c.id %>" <%= String(c.id) === String(values?.category_id) ? "selected" : "" %>><%= c.name %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="brand_id" class="field-label">Brand</label>
+            <select name="brand_id" id="brand_id" required class="field-input">
+              <option value="">Choose a brand</option>
+              <% brands?.forEach((b) => { %>
+                <option value="<%= b.id %>" <%= String(b.id) === String(values?.brand_id) ? "selected" : "" %>><%= b.name %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="price" class="field-label">Price ($)</label>
+            <input
+              type="number"
+              name="price"
+              id="price"
+              required
+              min="0"
+              step="0.01"
+              class="field-input"
+              value="<%= values?.price ?? '' %>"
+            />
+          </div>
+
+          <div class="field">
+            <label for="stock" class="field-label">Stock</label>
+            <input
+              type="number"
+              name="stock"
+              id="stock"
+              required
+              min="0"
+              step="1"
+              class="field-input"
+              value="<%= values?.stock ?? '' %>"
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="img_url" class="field-label">Image URL <span class="field-hint">(optional)</span></label>
+          <input
+            type="url"
+            name="img_url"
+            id="img_url"
+            placeholder="https://example.com/figure.jpg"
+            class="field-input"
+            value="<%= values?.img_url ?? '' %>"
+          />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <a href="/items" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">Add item</button>
+        </div>
+      </form>
+    </main>
   </body>
 </html>

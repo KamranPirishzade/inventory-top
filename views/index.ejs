@@ -1,37 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Items</title>
-    <link rel="stylesheet" href="/output.css">
-</head>
-<body class="p-4">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Items · FigureStore</title>
+    <link rel="stylesheet" href="/output.css" />
+  </head>
+  <body>
     <%- include('partials/header') %>
-    <h1 class="text-2xl font-bold">Welcome to the Items page!</h1>
-        <h2 class="text-xl font-semibold">Categories</h2>
-        <nav>
-            <ul class="flex gap-3">
-                <li><a href="/items" class="block px-3 py-2 border rounded-xl border-gray-300 hover:bg-gray-100 hover:transition-colors hover:duration-150 <%= selectedCategory === null ? 'bg-gray-200' : '' %>">All</a></li>
-                <% categories.forEach(category => { %>
-                    <li><a class="block px-3 py-2 border rounded-xl border-gray-300 hover:bg-gray-100 hover:transition-colors hover:duration-150 <%= Number(selectedCategory) === Number(category.id) ? 'bg-gray-200' : '' %>" href="/items/?category_id=<%= category.id %>"><%= category.name %></a></li>
-                <% }); %>
-            </ul>
-        </nav>
-        <main>
-            <h2 class="text-xl font-semibold">Items</h2>
-            <ul class="grid grid-cols-4 gap-4">
-                <% items.forEach(item => { %>
-                <li class="p-2 border min-h-60 rounded-xl border-gray-300">
-                        <img src="<% if (item.img_url) { %><%= item.img_url %><% } else { %>/images/default.png<% } %>" alt="<%= item.name %>" width="100" height="100" onerror="this.src='/images/default.png'">
-                        <a href="/items/<%= item.id %>"><%= item.name %></a>
-                        <p><%= item.description %></p>
-                        <p><strong>Price:</strong> $<%= item.price %></p>
-                        <p><strong>Availability:</strong> <%= item.stock > 0 ? 'In Stock(' + item.stock + ')' : 'Out of Stock' %></p>
-                        <a href="/items/<%= item.id %>/update" class="text-blue-500 hover:underline">Edit</a>
-                <% }); %>
-            </ul>
-            <a href="/items/add" class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Item</a>
-        </main>
-</body>
+
+    <main class="page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Inventory</h1>
+          <p class="page-subtitle"><%= items.length %> <%= items.length === 1 ? 'item' : 'items' %></p>
+        </div>
+        <a href="/items/add" class="btn btn-primary">+ Add item</a>
+      </div>
+
+      <nav aria-label="Filter by category" class="mb-8">
+        <ul class="flex flex-wrap gap-2">
+          <li>
+            <a href="/items" class="chip <%= selectedCategory === null ? 'chip-active' : '' %>">All</a>
+          </li>
+          <% categories.forEach(category => { %>
+            <li>
+              <a
+                href="/items?category_id=<%= category.id %>"
+                class="chip <%= Number(selectedCategory) === Number(category.id) ? 'chip-active' : '' %>"
+              ><%= category.name %></a>
+            </li>
+          <% }); %>
+        </ul>
+      </nav>
+
+      <% if (items.length === 0) { %>
+        <div class="empty-state">
+          <p class="font-medium text-gray-700">No items here yet.</p>
+          <p class="mt-1 text-sm">Add the first one to get started.</p>
+          <a href="/items/add" class="btn btn-primary mt-4">+ Add item</a>
+        </div>
+      <% } else { %>
+        <ul class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <% items.forEach(item => { %>
+            <li class="card flex flex-col overflow-hidden">
+              <a href="/items/<%= item.id %>" class="block aspect-square bg-gray-100">
+                <img
+                  src="<% if (item.img_url) { %><%= item.img_url %><% } else { %>/images/default.png<% } %>"
+                  alt="<%= item.name %>"
+                  class="h-full w-full object-contain p-4"
+                  loading="lazy"
+                  onerror="this.src='/images/default.png'"
+                />
+              </a>
+              <div class="flex flex-1 flex-col gap-2 p-4">
+                <p class="text-xs text-gray-500"><%= item.brand_name %></p>
+                <a href="/items/<%= item.id %>" class="font-semibold text-gray-900 hover:text-blue-600"><%= item.name %></a>
+                <% if (item.description) { %>
+                  <p class="line-clamp-2 text-sm text-gray-500"><%= item.description %></p>
+                <% } %>
+                <div class="mt-auto flex items-center justify-between pt-3">
+                  <span class="text-lg font-bold text-gray-900">$<%= item.price %></span>
+                  <% if (item.stock > 0) { %>
+                    <span class="badge badge-success">In stock (<%= item.stock %>)</span>
+                  <% } else { %>
+                    <span class="badge badge-danger">Out of stock</span>
+                  <% } %>
+                </div>
+                <a href="/items/<%= item.id %>/update" class="btn-link self-start">Edit</a>
+              </div>
+            </li>
+          <% }); %>
+        </ul>
+      <% } %>
+    </main>
+  </body>
 </html>

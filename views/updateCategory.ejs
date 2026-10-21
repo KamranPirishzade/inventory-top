@@ -3,53 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Update category form</title>
+    <title>Edit category · FigureStore</title>
     <link rel="stylesheet" href="/output.css" />
   </head>
-  <body class="p-4">
+  <body>
     <%- include('partials/header') %>
-    <h3 class="text-2xl font-bold">Update category</h3>
-    <form
-      action="/categories/<%= categoryId %>/update"
-      method="POST"
-      class="flex flex-col max-w-md gap-4 mt-4"
-    >
-      <label for="name">Category Name:</label>
-      <input
-        type="text"
-        name="name"
-        id="name"
-        required
-        class="border rounded p-2"
-        value="<%= locals.values?.name || '' %>"
-      />
 
-      <label for="description">Description:</label>
-      <textarea
-        name="description"
-        id="description"
-        required
-        class="border rounded p-2"
-    
-      ><%= locals.values?.description || '' %></textarea>
-      
-
-      <% if (errors !==null && errors.length > 0) { %>
-        <div class="text-red-500">
-          <ul>
-            <% errors.forEach(error => { %>
-              <li><%= error.msg %></li>
-            <% }); %>
-          </ul>
+    <main class="page">
+      <form action="/categories/<%= categoryId %>/update" method="POST" class="card form-card flex flex-col gap-5">
+        <div>
+          <h1 class="page-title">Edit category</h1>
+          <p class="page-subtitle">Changes apply to every item in this category.</p>
         </div>
-      <% } %>
 
-      <button
-        type="submit"
-        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Update Category
-      </button>
-    </form>
+        <%- include('partials/formErrors') %>
+
+        <div class="field">
+          <label for="name" class="field-label">Name</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            required
+            maxlength="100"
+            class="field-input"
+            value="<%= locals.values?.name || '' %>"
+          />
+        </div>
+
+        <div class="field">
+          <label for="description" class="field-label">Description</label>
+          <textarea
+            name="description"
+            id="description"
+            required
+            maxlength="500"
+            rows="4"
+            class="field-input"
+          ><%= locals.values?.description || '' %></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <a href="/categories" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </main>
   </body>
 </html>
