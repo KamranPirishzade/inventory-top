@@ -38,9 +38,6 @@ async function getCategories(req: Request, res: Response) {
     errorCode && Object.hasOwn(errorMessages, errorCode)
       ? errorMessages[errorCode]
       : undefined;
-  const count = errorCategoryId
-    ? await db.getCategoryItemCount(errorCategoryId)
-    : undefined;
 
   res.render("categories", {
     categories,
