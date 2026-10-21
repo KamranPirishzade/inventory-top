@@ -4,9 +4,13 @@ import categoriesController from "../controllers/categoriesContoller.ts";
 const categoriesRouter = Router();
 
 categoriesRouter.get("/", categoriesController.getCategories);
-// categoriesRouter.get("/add");
-// categoriesRouter.post("/add");
-categoriesRouter.get("/:id", categoriesController.getCategoryById);
+categoriesRouter.get("/add", categoriesController.addCategoryGet);
+categoriesRouter.post(
+  "/add",
+  categoriesController.validateCategory,
+  categoriesController.addCategory,
+);
+// categoriesRouter.get("/:id", categoriesController.getCategoryById);
 // categoriesRouter.get("/:id/update");
 // categoriesRouter.post("/:id/update");
 // categoriesRouter.post("/:id/delete");

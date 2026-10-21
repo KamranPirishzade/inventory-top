@@ -55,9 +55,9 @@ async function getItemById(
   return rows[0];
 }
 
-async function getCategories(): Promise<Omit<Category, "description">[]> {
-  const { rows } = await pool.query<Omit<Category, "description">>(
-    "SELECT id, name FROM categories ORDER BY name;",
+async function getCategories(): Promise<Category[]> {
+  const { rows } = await pool.query<Category>(
+    "SELECT * FROM categories ORDER BY name;",
   );
   return rows;
 }
@@ -78,6 +78,13 @@ async function getBrands(): Promise<Brand[]> {
   return rows;
 }
 
+async function addCategory(name: string, description: string): Promise<void> {
+  await pool.query(
+    "INSERT INTO categories (name, description) VALUES ($1, $2);",
+    [name, description],
+  );
+}
+
 export default {
   getItems,
   getItemsByCategory,
@@ -85,4 +92,5 @@ export default {
   getCategories,
   getCategoryById,
   getBrands,
+  addCategory,
 };
